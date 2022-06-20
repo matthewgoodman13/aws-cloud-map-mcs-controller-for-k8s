@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/aws/aws-cloud-map-mcs-controller-for-k8s/pkg/cloudmap"
 	"github.com/aws/aws-cloud-map-mcs-controller-for-k8s/pkg/common"
@@ -135,7 +136,10 @@ func (r *ServiceExportReconciler) handleUpdate(ctx context.Context, serviceExpor
 		Current: cmService.Endpoints,
 		Desired: endpoints,
 	}
+	start := time.Now()
 	changes := plan.CalculateChanges()
+	elapsed := time.Since(start)
+	r.Log.Info("CalculateChanges_SExport", "elapsed", elapsed)
 
 	if changes.HasUpdates() {
 		// merge creates and updates (Cloud Map RegisterEndpoints can handle both)

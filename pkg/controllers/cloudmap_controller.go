@@ -39,12 +39,13 @@ func (r *CloudMapReconciler) Start(ctx context.Context) error {
 	ticker := time.NewTicker(syncPeriod)
 	defer ticker.Stop()
 	for {
+		// CHANGES HERE
 		start := time.Now()
 		if err := r.Reconcile(ctx); err != nil {
 			// just log the error and continue running
 			r.Log.Error(err, "Cloud Map reconciliation error")
 		}
-		r.Log.Debug("Recon complete!", "duration", time.Since(start))
+		r.Log.Debug("Reconcile complete!", "duration", time.Since(start))
 
 		select {
 		case <-ticker.C:
@@ -214,7 +215,7 @@ func (r *CloudMapReconciler) updateEndpointSlices(ctx context.Context, svcImport
 	start := time.Now()
 	changes := plan.CalculateChanges()
 	elapsed := time.Since(start)
-	r.Log.Info("CalculateChanges", "elapsed", elapsed)
+	r.Log.Info("CalculateChanges_ES_Plan", "elapsed", elapsed)
 
 	for _, sliceToUpdate := range changes.Update {
 		r.Log.Debug("updating EndpointSlice", "namespace", sliceToUpdate.Namespace, "name", sliceToUpdate.Name)
