@@ -194,6 +194,7 @@ func (r *ServiceExportReconciler) createOrGetCloudMapService(ctx context.Context
 			return nil, err
 		}
 		if cmService, err = r.CloudMap.GetService(ctx, service.Namespace, service.Name); err != nil {
+			r.Log.Error(err, "createOrGetCMService: error fetching Service from Cloud Map", "namespace", service.Namespace, "name", service.Name)
 			return nil, err
 		}
 	}
