@@ -3,6 +3,9 @@ FROM golang:1.17 as builder
 
 WORKDIR /workspace
 
+
+ENV GOPROXY=direct
+
 # Copy the Go Modules manifests, plus the source
 COPY . ./
 

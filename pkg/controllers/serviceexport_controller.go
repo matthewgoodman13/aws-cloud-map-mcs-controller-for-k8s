@@ -53,6 +53,11 @@ func (r *ServiceExportReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 
 	namespace := req.Namespace
 	name := req.NamespacedName
+
+	// svc_cluster_name := fmt.Sprintf("%s-cid.%s", name.Name, CLUSTER_NAME)
+	// name.Name = svc_cluster_name
+	// r.Log.Info("new export name", "service", name)
+
 	r.Log.Debug("reconciling ServiceExport", "Namespace", namespace, "Name", name)
 
 	serviceExport := v1alpha1.ServiceExport{}
@@ -131,6 +136,12 @@ func (r *ServiceExportReconciler) handleUpdate(ctx context.Context, serviceExpor
 		return ctrl.Result{}, err
 	}
 
+	// Log if cmService is nil
+	if cmService == nil {
+		r.Log.Info("no Cloud Map service found",
+			"namespace", serviceExport.Namespace, "name", serviceExport.Name)
+	}
+
 	// Compute diff between Cloud Map and K8s endpoints, and apply changes
 	plan := model.Plan{
 		Current: cmService.Endpoints,
@@ -138,10 +149,11 @@ func (r *ServiceExportReconciler) handleUpdate(ctx context.Context, serviceExpor
 	}
 	start := time.Now()
 	changes := plan.CalculateChanges()
-	elapsed := time.Since(start)
+	elapsed := time.Since(start).Microseconds()
 	r.Log.Info("CalculateChanges_SExport", "elapsed", elapsed)
 
 	if changes.HasUpdates() {
+
 		// merge creates and updates (Cloud Map RegisterEndpoints can handle both)
 		upserts := changes.Create
 		upserts = append(upserts, changes.Update...)
@@ -246,6 +258,7 @@ func (r *ServiceExportReconciler) extractEndpoints(ctx context.Context, svc *v1.
 						attributes[K8sVersionAttr] = version.PackageName + " " + version.GetVersion()
 					}
 					// TODO extract attributes - pod, node and other useful details if possible
+					attributes["CLUSTER_ID"] = "cluster1"
 
 					port := EndpointPortToPort(endpointPort)
 					result = append(result, &model.Endpoint{

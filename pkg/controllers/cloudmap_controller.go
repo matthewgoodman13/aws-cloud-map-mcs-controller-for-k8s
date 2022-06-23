@@ -19,6 +19,8 @@ import (
 const (
 	// TODO move to configuration
 	syncPeriod = 2 * time.Second
+
+	CLUSTER_NAME = "cluster1"
 )
 
 // CloudMapReconciler reconciles state of Cloud Map services with local ServiceImport objects
@@ -35,7 +37,7 @@ type CloudMapReconciler struct {
 
 // Start implements manager.Runnable
 func (r *CloudMapReconciler) Start(ctx context.Context) error {
-	r.Log.Info("This is a Matthew Goodman special!")
+	r.Log.Info("V3: This is a Matthew Goodman special!")
 	ticker := time.NewTicker(syncPeriod)
 	defer ticker.Stop()
 	for {
@@ -45,7 +47,7 @@ func (r *CloudMapReconciler) Start(ctx context.Context) error {
 			// just log the error and continue running
 			r.Log.Error(err, "Cloud Map reconciliation error")
 		}
-		r.Log.Debug("Reconcile complete!", "duration", time.Since(start))
+		r.Log.Debug("Reconcile complete!", "duration", time.Since(start).Microseconds())
 
 		select {
 		case <-ticker.C:
@@ -91,6 +93,10 @@ func (r *CloudMapReconciler) reconcileNamespace(ctx context.Context, namespaceNa
 
 	existingImportsMap := make(map[string]v1alpha1.ServiceImport)
 	for _, svc := range serviceImports.Items {
+		// svc_cluster_name := fmt.Sprintf("%s-cid.%s", svc.Name, CLUSTER_NAME)
+		// svc.Name = svc_cluster_name
+		// r.Log.Info("new name", "service", svc.Name)
+
 		existingImportsMap[svc.Namespace+"/"+svc.Name] = svc
 	}
 
@@ -214,7 +220,7 @@ func (r *CloudMapReconciler) updateEndpointSlices(ctx context.Context, svcImport
 	// CHANGES HERE!
 	start := time.Now()
 	changes := plan.CalculateChanges()
-	elapsed := time.Since(start)
+	elapsed := time.Since(start).Microseconds()
 	r.Log.Info("CalculateChanges_ES_Plan", "elapsed", elapsed)
 
 	for _, sliceToUpdate := range changes.Update {
