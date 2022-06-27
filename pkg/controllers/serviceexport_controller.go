@@ -136,12 +136,6 @@ func (r *ServiceExportReconciler) handleUpdate(ctx context.Context, serviceExpor
 		return ctrl.Result{}, err
 	}
 
-	// Log if cmService is nil
-	if cmService == nil {
-		r.Log.Info("no Cloud Map service found",
-			"namespace", serviceExport.Namespace, "name", serviceExport.Name)
-	}
-
 	// Compute diff between Cloud Map and K8s endpoints, and apply changes
 	plan := model.Plan{
 		Current: cmService.Endpoints,
@@ -194,7 +188,6 @@ func (r *ServiceExportReconciler) createOrGetCloudMapService(ctx context.Context
 			return nil, err
 		}
 		if cmService, err = r.CloudMap.GetService(ctx, service.Namespace, service.Name); err != nil {
-			r.Log.Error(err, "createOrGetCMService: error fetching Service from Cloud Map", "namespace", service.Namespace, "name", service.Name)
 			return nil, err
 		}
 	}
@@ -259,7 +252,7 @@ func (r *ServiceExportReconciler) extractEndpoints(ctx context.Context, svc *v1.
 						attributes[K8sVersionAttr] = version.PackageName + " " + version.GetVersion()
 					}
 					// TODO extract attributes - pod, node and other useful details if possible
-					attributes["CLUSTER_ID"] = "cluster1"
+					// attributes["CLUSTER_ID"] = "cluster1"
 
 					port := EndpointPortToPort(endpointPort)
 					result = append(result, &model.Endpoint{
