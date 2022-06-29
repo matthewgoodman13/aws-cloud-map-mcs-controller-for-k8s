@@ -36,6 +36,9 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(multiclusterv1alpha1.AddToScheme(scheme))
+
+	utilruntime.Must(multiclusterv1alpha1.ClusterPropertyAddToScheme(scheme))
+
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -84,12 +87,24 @@ func main() {
 
 	log.Info("Running with AWS region", "AWS_REGION", awsCfg.Region)
 
+	clusterPropertyReconciler := &controllers.ClusterPropertyReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+		Log:    common.NewLogger("controllers", "ClusterProperty"),
+	}
+
+	if err = mgr.Add(clusterPropertyReconciler); err != nil {
+		log.Error(err, "unable to create controller", "controller", "ClusterProperty")
+		os.Exit(1)
+	}
+
 	serviceDiscoveryClient := cloudmap.NewDefaultServiceDiscoveryClient(&awsCfg)
 	if err = (&controllers.ServiceExportReconciler{
-		Client:   mgr.GetClient(),
-		Log:      common.NewLogger("controllers", "ServiceExport"),
-		Scheme:   mgr.GetScheme(),
-		CloudMap: serviceDiscoveryClient,
+		Client:                    mgr.GetClient(),
+		Log:                       common.NewLogger("controllers", "ServiceExport"),
+		Scheme:                    mgr.GetScheme(),
+		CloudMap:                  serviceDiscoveryClient,
+		ClusterPropertyReconciler: clusterPropertyReconciler,
 	}).SetupWithManager(mgr); err != nil {
 		log.Error(err, "unable to create controller", "controller", "ServiceExport")
 		os.Exit(1)

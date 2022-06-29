@@ -28,17 +28,19 @@ import (
 )
 
 const (
-	K8sVersionAttr            = "K8S_CONTROLLER"
-	ServiceExportFinalizer    = "multicluster.k8s.aws/service-export-finalizer"
-	EndpointSliceServiceLabel = "kubernetes.io/service-name"
+	K8sVersionAttr                 = "K8S_CONTROLLER"
+	ServiceExportFinalizer         = "multicluster.k8s.aws/service-export-finalizer"
+	EndpointSliceServiceLabel      = "kubernetes.io/service-name"
+	EndpointClusterIDAttributeName = "CLUSTER_ID"
 )
 
 // ServiceExportReconciler reconciles a ServiceExport object
 type ServiceExportReconciler struct {
-	Client   client.Client
-	Log      common.Logger
-	Scheme   *runtime.Scheme
-	CloudMap cloudmap.ServiceDiscoveryClient
+	Client                    client.Client
+	Log                       common.Logger
+	Scheme                    *runtime.Scheme
+	CloudMap                  cloudmap.ServiceDiscoveryClient
+	ClusterPropertyReconciler *ClusterPropertyReconciler
 }
 
 // +kubebuilder:rbac:groups="",resources=services,verbs=get
@@ -242,6 +244,15 @@ func (r *ServiceExportReconciler) extractEndpoints(ctx context.Context, svc *v1.
 						attributes[K8sVersionAttr] = version.PackageName + " " + version.GetVersion()
 					}
 					// TODO extract attributes - pod, node and other useful details if possible
+
+					// Retrieve ClusterID from ClusterProperty CRD
+					clusterID, err := r.ClusterPropertyReconciler.GetClusterID(ctx)
+
+					if err != nil {
+						return nil, err
+					}
+
+					attributes[EndpointClusterIDAttributeName] = clusterID
 
 					port := EndpointPortToPort(endpointPort)
 					result = append(result, &model.Endpoint{
