@@ -51,7 +51,11 @@ type ClusterPropertyReconciler struct {
 // Start implements manager.Runnable
 func (r *ClusterPropertyReconciler) Start(ctx context.Context) error {
 	r.Log.Info("Starting ClusterPropertyReconciler")
-	r.Reconcile(ctx, ctrl.Request{})
+	res, err := r.Reconcile(ctx, ctrl.Request{})
+	if err != nil {
+		return err
+	}
+	r.Log.Info("Reconcile result", "result", res)
 
 	return nil
 }
@@ -85,7 +89,6 @@ func (r *ClusterPropertyReconciler) GetClusterID(ctx context.Context) (string, e
 
 // Create ClusterID ClusterProperty
 func (r *ClusterPropertyReconciler) CreateClusterID(ctx context.Context) error {
-
 	clusterID := uuid.NewString()
 
 	clusterProperty := &v1alpha1.ClusterProperty{
@@ -108,11 +111,11 @@ func (r *ClusterPropertyReconciler) CreateClusterID(ctx context.Context) error {
 }
 
 // Logs all clusterProperties
-func (r *ClusterPropertyReconciler) DisplayAll(ctx context.Context) (ctrl.Result, error) {
+func (r *ClusterPropertyReconciler) DisplayAll(ctx context.Context) {
 	var clusterProperties = v1alpha1.ClusterPropertyList{}
 	if err := r.List(ctx, &clusterProperties); err != nil {
 		r.Log.Error(err, "Unable to list the ClusterProperties")
-		return ctrl.Result{}, err
+		return
 	}
 	r.Log.Info("ClusterProperties", "clusterProperties", clusterProperties)
 
@@ -124,8 +127,6 @@ func (r *ClusterPropertyReconciler) DisplayAll(ctx context.Context) (ctrl.Result
 	// 		return ctrl.Result{}, err
 	// 	}
 	// }
-
-	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
