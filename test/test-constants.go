@@ -106,25 +106,9 @@ func GetTestEndpoint2() *model.Endpoint {
 	}
 }
 
-func GetTestEndpoint1WithAttr() *model.Endpoint {
-	return &model.Endpoint{
-		Id: EndptId1,
-		IP: EndptIp1,
-		EndpointPort: model.Port{
-			Name:     PortName1,
-			Port:     Port1,
-			Protocol: Protocol1,
-		},
-		ServicePort: model.Port{
-			Name:       PortName1,
-			Port:       ServicePort1,
-			TargetPort: PortStr1,
-			Protocol:   Protocol1,
-		},
-		Attributes: map[string]string{
-			ClusterIdName: ClusterIdValue,
-		},
-	}
+func AddClusterIDAttr(endpt *model.Endpoint) *model.Endpoint {
+	endpt.Attributes[ClusterIdName] = ClusterIdValue
+	return endpt
 }
 
 func GetTestEndpoints(count int) (endpts []*model.Endpoint) {

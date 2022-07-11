@@ -49,7 +49,7 @@ func TestServiceExportReconciler_Reconcile_NewServiceExport(t *testing.T) {
 	gomock.InOrder(first, second)
 	mock.EXPECT().CreateService(gomock.Any(), test.HttpNsName, test.SvcName).Return(nil).Times(1)
 	mock.EXPECT().RegisterEndpoints(gomock.Any(), test.HttpNsName, test.SvcName,
-		[]*model.Endpoint{test.GetTestEndpoint1WithAttr()}).Return(nil).Times(1)
+		[]*model.Endpoint{test.AddClusterIDAttr(test.GetTestEndpoint1())}).Return(nil).Times(1)
 
 	reconciler := getServiceExportReconciler(t, mock, fakeClient)
 

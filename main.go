@@ -24,6 +24,7 @@ import (
 
 	aboutv1alpha1 "github.com/aws/aws-cloud-map-mcs-controller-for-k8s/pkg/apis/about/v1alpha1"
 	multiclusterv1alpha1 "github.com/aws/aws-cloud-map-mcs-controller-for-k8s/pkg/apis/multicluster/v1alpha1"
+	aboutcontrollers "github.com/aws/aws-cloud-map-mcs-controller-for-k8s/pkg/controllers/about"
 	multiclustercontrollers "github.com/aws/aws-cloud-map-mcs-controller-for-k8s/pkg/controllers/multicluster"
 	// +kubebuilder:scaffold:imports
 )
@@ -106,6 +107,16 @@ func main() {
 
 	if err = mgr.Add(cloudMapReconciler); err != nil {
 		log.Error(err, "unable to create controller", "controller", "CloudMap")
+		os.Exit(1)
+	}
+
+	clusterPropertyController := &aboutcontrollers.ClusterPropertyController{
+		Client: mgr.GetClient(),
+		Log:    common.NewLogger("controllers", "ClusterProperty"),
+	}
+
+	if err = mgr.Add(clusterPropertyController); err != nil {
+		log.Error(err, "unable to create controller", "controller", "ClusterProperty")
 		os.Exit(1)
 	}
 
