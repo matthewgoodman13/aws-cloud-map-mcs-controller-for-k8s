@@ -25,11 +25,12 @@ func TestClusterIDDoesNotExist(t *testing.T) {
 		WithScheme(getClusterPropertyScheme()).
 		Build()
 
-	cpController := getClusterPropertyController(t, fakeClient)
+	clusterPropertyController := getClusterPropertyController(t, fakeClient)
 
 	// Run the crashing code when BE_CRASHER is set
 	if os.Getenv("BE_CRASHER") == "1" {
-		cpController.Start(context.TODO())
+		err := clusterPropertyController.Start(context.TODO())
+		assert.NoError(t, err)
 		return
 	}
 
@@ -51,12 +52,12 @@ func TestClusterIDExists(t *testing.T) {
 		WithObjects(clusterIdForTest()).
 		Build()
 
-	cpController := getClusterPropertyController(t, fakeClient)
-	cpController.Start(context.Background())
+	clusterPropertyController := getClusterPropertyController(t, fakeClient)
 
 	// Run the crashing code when BE_CRASHER is set
 	if os.Getenv("BE_CRASHER") == "1" {
-		cpController.Start(context.TODO())
+		err := clusterPropertyController.Start(context.TODO())
+		assert.NoError(t, err)
 		return
 	}
 
