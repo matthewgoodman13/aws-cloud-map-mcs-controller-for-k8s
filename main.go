@@ -7,9 +7,10 @@ import (
 
 	"github.com/aws/aws-cloud-map-mcs-controller-for-k8s/pkg/common"
 
+	"github.com/aws/aws-sdk-go-v2/config"
+
 	"github.com/aws/aws-cloud-map-mcs-controller-for-k8s/pkg/cloudmap"
 	"github.com/aws/aws-cloud-map-mcs-controller-for-k8s/pkg/version"
-	"github.com/aws/aws-sdk-go-v2/config"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -111,6 +112,13 @@ func main() {
 	if err = mgr.Add(cloudMapReconciler); err != nil {
 		log.Error(err, "unable to create controller", "controller", "CloudMap")
 		os.Exit(1)
+	}
+
+	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
+		if err = (&multiclusterv1alpha1.ServiceExport{}).SetupWebhookWithManager(mgr); err != nil {
+			log.Error(err, "unable to create webhook", "webhook", "ServiceExport")
+			os.Exit(1)
+		}
 	}
 
 	//+kubebuilder:scaffold:builder
