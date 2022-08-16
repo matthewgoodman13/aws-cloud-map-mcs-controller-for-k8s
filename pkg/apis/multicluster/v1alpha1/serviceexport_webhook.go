@@ -71,6 +71,9 @@ func (r *ServiceExport) ValidateServiceExport() error {
 			{
 				Type:   ServiceExportValid,
 				Status: metav1.ConditionTrue,
+				LastTransitionTime: metav1.Time{
+					Time: metav1.Now().Time,
+				},
 			},
 		},
 	}
