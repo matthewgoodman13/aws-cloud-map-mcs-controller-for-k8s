@@ -47,6 +47,16 @@ kubectl apply -k "github.com/aws/aws-cloud-map-mcs-controller-for-k8s/samples/co
 kubectl apply -k "github.com/aws/aws-cloud-map-mcs-controller-for-k8s/samples/coredns-deployment.yaml"
 ```
 
+#### Configure Cert-Manager
+
+Install cert-manager into each participating cluster. The certificate manager is required to provision the certificates necessary for the webhook server and admission webhooks.
+
+To install cert-manager, run the following command.
+
+```bash
+kubectl apply -k "github.com/aws/aws-cloud-map-mcs-controller-for-k8s/samples/cert-manager.yaml"
+```
+
 ### Install Controller
 
 To install the latest release of the controller, run the following commands.

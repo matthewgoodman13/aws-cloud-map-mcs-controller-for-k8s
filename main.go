@@ -115,7 +115,7 @@ func main() {
 	}
 
 	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
-		if err = (&multiclusterv1alpha1.ServiceExport{}).SetupWebhookWithManager(mgr); err != nil {
+		if err = (&multiclusterv1alpha1.ServiceExport{}).SetupWebhookWithManager(mgr, clusterUtils); err != nil {
 			log.Error(err, "unable to create webhook", "webhook", "ServiceExport")
 			os.Exit(1)
 		}

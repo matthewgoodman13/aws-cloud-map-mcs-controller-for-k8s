@@ -6,6 +6,8 @@ PKG:=github.com/aws/aws-cloud-map-mcs-controller-for-k8s/pkg/version
 IMG ?= controller:latest
 # AWS Region
 AWS_REGION ?= us-east-1
+# Enable Webhooks for Local Testing
+ENABLE_WEBHOOKS ?= false
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -123,7 +125,7 @@ build: manifests generate generate-mocks fmt vet lint ## Build manager binary.
 	go build -ldflags="-s -w -X ${PKG}.GitVersion=${GIT_TAG} -X ${PKG}.GitCommit=${GIT_COMMIT}" -o bin/manager main.go
 
 run: manifests generate generate-mocks fmt vet ## Run a controller from your host.
-	go run -ldflags="-s -w -X ${PKG}.GitVersion=${GIT_TAG} -X ${PKG}.GitCommit=${GIT_COMMIT}" ./main.go --zap-devel=true $(ARGS)
+	ENABLE_WEBHOOKS=$(ENABLE_WEBHOOKS) go run -ldflags="-s -w -X ${PKG}.GitVersion=${GIT_TAG} -X ${PKG}.GitCommit=${GIT_COMMIT}" ./main.go --zap-devel=true $(ARGS)
 
 docker-build: test ## Build docker image with the manager.
 	docker build --no-cache -t ${IMG} .
