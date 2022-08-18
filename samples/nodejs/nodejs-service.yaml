@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  namespace: example
+  name: my-nodejs-service
+spec:
+  selector:
+    app: my-nodejs-service
+  ports:
+    - port: 80
+      targetPort: 6500

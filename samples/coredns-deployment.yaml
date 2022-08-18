@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    eks.amazonaws.com/component: coredns
+    # eks.amazonaws.com/component: coredns
     k8s-app: kube-dns
     kubernetes.io/name: CoreDNS
   name: coredns
@@ -13,7 +13,7 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      eks.amazonaws.com/component: coredns
+      # eks.amazonaws.com/component: coredns
       k8s-app: kube-dns
   strategy:
     rollingUpdate:
@@ -23,10 +23,10 @@ spec:
   template:
     metadata:
       annotations:
-        eks.amazonaws.com/compute-type: ec2
+        # eks.amazonaws.com/compute-type: ec2
       creationTimestamp: null
       labels:
-        eks.amazonaws.com/component: coredns
+        # eks.amazonaws.com/component: coredns
         k8s-app: kube-dns
     spec:
       affinity:
