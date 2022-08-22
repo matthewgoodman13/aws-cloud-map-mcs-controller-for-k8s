@@ -20,7 +20,7 @@ kind: RoleBinding
 metadata:
   name: nodejs-manager-clusterrole-binding
   # Specifies the namespace the ClusterRole can be used in.
-  namespace: example
+  namespace: demo
 subjects:
   - kind: ServiceAccount
     name: nodejs-manager
@@ -41,12 +41,12 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: nodejs-manager
-    namespace: example
+    namespace: demo
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: example
+  namespace: demo
   name: my-nodejs-deployment
 spec:
   replicas: 1

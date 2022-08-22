@@ -1,7 +1,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  namespace: example
+  namespace: demo
   name: my-nodejs-service
 spec:
   selector:
