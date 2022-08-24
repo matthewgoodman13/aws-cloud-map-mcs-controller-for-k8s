@@ -3,11 +3,11 @@ kind: ClusterProperty
 metadata:
   name: id.k8s.io
 spec:
-  value: eks-e2e-clusterid-2
+  value: my-eks-cluster-2
 ---
 apiVersion: about.k8s.io/v1alpha1
 kind: ClusterProperty
 metadata:
   name: clusterset.k8s.io
 spec:
-  value: eks-e2e-clustersetid-1
+  value: my-eks-clusterset
