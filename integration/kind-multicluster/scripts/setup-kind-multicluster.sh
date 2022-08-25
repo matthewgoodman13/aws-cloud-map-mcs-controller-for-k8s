@@ -12,8 +12,11 @@ source ./integration/kind-multicluster/scripts/common.sh
 MCS_CONTROLLER_IMAGE="$IMG"
 
 # Build Docker Image of Controller
-make docker-build
-
+# if USE_EXISTING_IMAGE is set to true, then the image will not be built
+if [ ! "$USE_EXISTING_IMAGE" = "true" ]; then
+  echo "Building Docker Image of Controller"
+  make docker-build
+fi
 
 # Cluster 1
 $KIND_BIN create cluster --name "$KIND_SHORT1" --image "$IMAGE" --config "$C1YAML"

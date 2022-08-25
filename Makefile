@@ -7,6 +7,8 @@ IMG ?= controller:latest
 # AWS Region
 AWS_REGION ?= us-east-1
 
+USE_EXISTING_IMAGE ?= false
+
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
 GOBIN=$(shell go env GOPATH)/bin
@@ -98,14 +100,20 @@ kind-integration-run: ## Run the integration test controller
 
 kind-integration-cleanup: kind  ## Cleanup integration test resources in Cloud Map and local kind cluster
 	@./integration/kind-test/scripts/cleanup-kind.sh
-
+##############
 kind-multicluster-integration-suite: ## Provision and run multicluster integration tests with cleanup
-	@./integration/kind-multicluster/scripts/setup-kind-multicluster.sh
+	IMG=$(IMG) USE_EXISTING_IMAGE=$(USE_EXISTING_IMAGE) \
+	./integration/kind-multicluster/scripts/setup-kind-multicluster.sh
 
+kind-multicluster-integration-cleanup: kind  ## Cleanup multicluster integration test resources in Cloud Map and local kind cluster
+	@./integration/kind-multicluster/scripts/cleanup-kind.sh
+
+##############
 eks-integration-suite: ## Provision and run EKS integration tests with cleanup
 	make eks-integration-setup && \
 	make eks-integration-run && \
 	make eks-integration-cleanup
+
 
 eks-integration-setup: build ## Setup the integration test using EKS clusters
 	@./integration/eks-test/scripts/eks-setup.sh
