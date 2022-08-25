@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-# Builds the AWS Cloud Map MCS Controller for K8s, provisions a Kubernetes clusters with Kind,
-# installs Cloud Map CRDs and controller into the cluster and applies export and deployment configs.
+. ./util.sh
+
+# Builds the AWS Cloud Map MCS Controller for K8s, provisions Kubernetes clusters with Kind,
+# installs Cloud Map CRDs and controller into the clusters and applies export and deployment configs.
 
 set -e
 

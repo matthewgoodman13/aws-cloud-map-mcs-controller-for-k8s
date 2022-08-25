@@ -99,6 +99,9 @@ kind-integration-run: ## Run the integration test controller
 kind-integration-cleanup: kind  ## Cleanup integration test resources in Cloud Map and local kind cluster
 	@./integration/kind-test/scripts/cleanup-kind.sh
 
+kind-multicluster-integration-suite: ## Provision and run multicluster integration tests with cleanup
+	@./integration/kind-multicluster/scripts/setup-kind-multicluster.sh
+
 eks-integration-suite: ## Provision and run EKS integration tests with cleanup
 	make eks-integration-setup && \
 	make eks-integration-run && \
