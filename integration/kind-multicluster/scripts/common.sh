@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 export KIND_BIN='./bin/kind'
+export KIND_CONFIGS='./integration/kind-multicluster/configs'
 export KUBECTL_BIN='kubectl'
 export LOGS='./integration/kind-test/testlog'
-export CONFIGS='./integration/kind-test/configs'
+export CONFIGS='./integration/kind-multicluster/configs'
 export SCENARIOS='./integration/shared/scenarios'
 export NAMESPACE='aws-cloud-map-mcs-kind-e2e'
 

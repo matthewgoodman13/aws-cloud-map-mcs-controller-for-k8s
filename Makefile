@@ -7,7 +7,7 @@ IMG ?= controller:latest
 # AWS Region
 AWS_REGION ?= us-east-1
 
-USE_EXISTING_IMAGE ?= false
+USE_EXISTING_IMAGE ?= true
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
